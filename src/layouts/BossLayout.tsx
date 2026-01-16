@@ -44,10 +44,12 @@ export default function BossLayout() {
 
               <NavLink
                 to="/boss/mechanics"
+                end
                 className={({ isActive }) => linkClass(isActive)}
               >
                 Mechanics
               </NavLink>
+
 
               <NavLink
                 to="/boss/mechanics/new"

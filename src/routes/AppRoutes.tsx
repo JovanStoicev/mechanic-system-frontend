@@ -3,6 +3,10 @@ import LoginPage from "../pages/login/LoginPage"
 import BossHome from "../pages/boss/BossHome"
 import MechanicHome from "../pages/mechanic/MechanicHome"
 import ProtectedRoute from "./ProtectedRoute"
+import BossLayout from "../layouts/BossLayout"
+import MechanicsListPage from "../pages/boss/MechanicsListPage"
+import AddMechanicPage from "../pages/boss/AddMechanicPage"
+
 
 export default function AppRoutes() {
   return (
@@ -14,10 +18,14 @@ export default function AppRoutes() {
         path="/boss"
         element={
           <ProtectedRoute allow="BOSS">
-            <BossHome />
+            <BossLayout />
           </ProtectedRoute>
         }
-      />
+      >
+        <Route index element={<Navigate to="/boss/mechanics" replace />} />
+        <Route path="mechanics" element={<MechanicsListPage />} />
+        <Route path="mechanics/new" element={<AddMechanicPage />} />
+      </Route>
 
       <Route
         path="/mechanic"
