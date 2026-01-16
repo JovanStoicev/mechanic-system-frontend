@@ -1,6 +1,8 @@
 import { Routes, Route, Navigate } from "react-router-dom"
 import LoginPage from "../pages/login/LoginPage"
-import BossHome from "../pages/boss/BossHome"
+import PartsListPage from "../pages/boss/PartsListPage"
+import AddPartPage from "../pages/boss/AddPartPage"
+import PartRequestsPage from "../pages/boss/PartRequestsPage"
 import MechanicHome from "../pages/mechanic/MechanicHome"
 import ProtectedRoute from "./ProtectedRoute"
 import BossLayout from "../layouts/BossLayout"
@@ -25,6 +27,9 @@ export default function AppRoutes() {
         <Route index element={<Navigate to="/boss/mechanics" replace />} />
         <Route path="mechanics" element={<MechanicsListPage />} />
         <Route path="mechanics/new" element={<AddMechanicPage />} />
+        <Route path="parts" element={<PartsListPage />} />
+        <Route path="parts/new" element={<AddPartPage />} />
+        <Route path="part-requests" element={<PartRequestsPage />} />
       </Route>
 
       <Route
