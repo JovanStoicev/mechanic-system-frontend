@@ -12,7 +12,8 @@ export default function CreateJobPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const { cars, parts, mechanics, addJob, addJobPart } = useBossData();
+  const { cars, parts, mechanics, addJob, addJobPart, consumePartStock } =
+    useBossData();
 
   // TEMP mapping: pick first mechanic. Later: map by user.email -> mechanicId from backend.
   const mechanicId = useMemo(() => mechanics[0]?.id ?? 1, [mechanics]);
@@ -119,6 +120,7 @@ export default function CreateJobPage() {
       addJobPart({ jobId, partId: l.partId, qty: l.qty });
     }
 
+    consumePartStock(lines);
     navigate("/mechanic/jobs", { replace: true });
   }
 
@@ -229,7 +231,7 @@ export default function CreateJobPage() {
 
                     <div className="col-span-6 md:col-span-2">
                       <label className="text-xs font-medium text-slate-600">
-                        Quantity
+                        Qty
                       </label>
 
                       <input

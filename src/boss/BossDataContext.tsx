@@ -26,6 +26,8 @@ type BossData = {
   addJob: (j: Omit<Job, "id" | "createdAt">) => number;
   setJobStatus: (jobId: number, status: Job["status"]) => void;
   addJobPart: (jp: Omit<JobPart, "id">) => void;
+
+  consumePartStock: (lines: Array<{ partId: number; qty: number }>) => void;
 };
 
 const BossDataContext = createContext<BossData | undefined>(undefined);
@@ -108,17 +110,20 @@ export function BossDataProvider({ children }: { children: ReactNode }) {
     () => ({
       mechanics,
       cars,
+      parts,
       jobs,
       jobParts,
-      parts,
+
       addMechanic: (m) => {
         const newItem: Mechanic = { id: mechanicId.current++, ...m };
         setMechanics((prev) => [newItem, ...prev]);
       },
+
       addCar: (c) => {
         const newItem: Car = { id: carId.current++, ...c };
         setCars((prev) => [newItem, ...prev]);
       },
+
       addPart: (p) => {
         const newItem: Part = { id: partId.current++, ...p };
         setParts((prev) => [newItem, ...prev]);
@@ -129,6 +134,7 @@ export function BossDataProvider({ children }: { children: ReactNode }) {
           prev.map((p) => (p.id === id ? { ...p, stockQty: newQty } : p)),
         );
       },
+
       addJob: (j) => {
         const newItem: Job = {
           id: jobId.current++,
@@ -138,14 +144,33 @@ export function BossDataProvider({ children }: { children: ReactNode }) {
         setJobs((prev) => [newItem, ...prev]);
         return newItem.id;
       },
+
       setJobStatus: (id, status) => {
         setJobs((prev) =>
           prev.map((j) => (j.id === id ? { ...j, status } : j)),
         );
       },
+
       addJobPart: (jp) => {
         const newItem: JobPart = { id: jobPartId.current++, ...jp };
         setJobParts((prev) => [newItem, ...prev]);
+      },
+
+      consumePartStock: (lines) => {
+        setParts((prevParts) => {
+          const byId = new Map(prevParts.map((p) => [p.id, p]));
+
+          for (const l of lines) {
+            const p = byId.get(l.partId);
+            if (!p) continue;
+            byId.set(l.partId, {
+              ...p,
+              stockQty: Math.max(0, p.stockQty - l.qty),
+            });
+          }
+
+          return Array.from(byId.values());
+        });
       },
     }),
     [mechanics, cars, parts, jobs, jobParts],
