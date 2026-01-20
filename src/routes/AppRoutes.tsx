@@ -8,7 +8,8 @@ import ProtectedRoute from "./ProtectedRoute"
 import BossLayout from "../layouts/BossLayout"
 import MechanicsListPage from "../pages/boss/MechanicsListPage"
 import AddMechanicPage from "../pages/boss/AddMechanicPage"
-
+import CarsListPage from "../pages/boss/CarListPage"
+import AddCarPage from "../pages/boss/AddCarPage"
 
 export default function AppRoutes() {
   return (
@@ -30,6 +31,8 @@ export default function AppRoutes() {
         <Route path="parts" element={<PartsListPage />} />
         <Route path="parts/new" element={<AddPartPage />} />
         <Route path="part-requests" element={<PartRequestsPage />} />
+        <Route path="cars" element={<CarsListPage />} />
+        <Route path="cars/new" element={<AddCarPage />} />
       </Route>
 
       <Route

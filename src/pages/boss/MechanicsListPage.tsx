@@ -1,19 +1,23 @@
 import { Link } from "react-router-dom"
 import PageHeader from "../../components/PageHeader"
+import { useBossData } from "../../boss/BossDataContext"
 
-type MechanicRow = {
-  id: number
-  name: string
-  email: string
-  fixedSalary: number
-}
+// type MechanicRow = {
+//   id: number
+//   name: string
+//   email: string
+//   fixedSalary: number
+// }
 
-const MOCK_MECHANICS: MechanicRow[] = [
-  { id: 1, name: "Marko Markovic", email: "marko@garage.com", fixedSalary: 800 },
-  { id: 2, name: "Ivan Ilic", email: "ivan@garage.com", fixedSalary: 900 },
-]
+// const MOCK_MECHANICS: MechanicRow[] = [
+//   { id: 1, name: "Marko Markovic", email: "marko@garage.com", fixedSalary: 800 },
+//   { id: 2, name: "Ivan Ilic", email: "ivan@garage.com", fixedSalary: 900 },
+// ]
+
 
 export default function MechanicsListPage() {
+const { mechanics } = useBossData()
+
   return (
     <div>
       <PageHeader
@@ -45,7 +49,7 @@ export default function MechanicsListPage() {
             </tr>
           </thead>
           <tbody>
-            {MOCK_MECHANICS.map((m) => (
+            {mechanics.map((m) => (
               <tr key={m.id} className="border-t">
                 <td className="px-4 py-3">{m.name}</td>
                 <td className="px-4 py-3">{m.email}</td>

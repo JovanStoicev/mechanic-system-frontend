@@ -73,6 +73,14 @@ export default function BossLayout() {
               >
                 Part requests
               </NavLink>
+              
+              <NavLink
+                to="/boss/cars"
+                end
+                className={({ isActive }) => linkClass(isActive)}
+              >
+                Cars
+              </NavLink>
 
               <div className="mt-3 text-xs font-semibold text-slate-500 px-3 py-2">
                 Next (later)

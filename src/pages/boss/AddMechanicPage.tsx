@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import PageHeader from "../../components/PageHeader"
+import { useBossData } from "../../boss/BossDataContext"
 
 export default function AddMechanicPage() {
   const navigate = useNavigate()
@@ -8,13 +9,13 @@ export default function AddMechanicPage() {
   const [email, setEmail] = useState("")
   const [fixedSalary, setFixedSalary] = useState<number>(800)
   const [password, setPassword] = useState("")
+  const { addMechanic } = useBossData()
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault()
 
     // mocked: later POST /api/boss/mechanics
-    console.log({ name, email, fixedSalary, password })
-
+    addMechanic({ name, email, fixedSalary })
     navigate("/boss/mechanics", { replace: true })
   }
 
