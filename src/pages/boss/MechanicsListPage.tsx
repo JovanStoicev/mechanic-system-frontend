@@ -1,69 +1,89 @@
-import { Link } from "react-router-dom"
-import PageHeader from "../../components/PageHeader"
-import { useBossData } from "../../boss/BossDataContext"
-
-// type MechanicRow = {
-//   id: number
-//   name: string
-//   email: string
-//   fixedSalary: number
-// }
-
-// const MOCK_MECHANICS: MechanicRow[] = [
-//   { id: 1, name: "Marko Markovic", email: "marko@garage.com", fixedSalary: 800 },
-//   { id: 2, name: "Ivan Ilic", email: "ivan@garage.com", fixedSalary: 900 },
-// ]
-
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import PageHeader from "../../components/PageHeader";
+import { useAuth } from "../../auth/AuthContext";
+import { getMechanics, type MechanicDto } from "../../api/boss";
 
 export default function MechanicsListPage() {
-const { mechanics } = useBossData()
+  const { user } = useAuth();
+  const [items, setItems] = useState<MechanicDto[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      if (!user) return;
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await getMechanics(user.token);
+        if (!cancelled) setItems(data);
+      } catch (e) {
+        if (!cancelled)
+          setError(e instanceof Error ? e.message : "Failed to load mechanics");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
 
   return (
     <div>
       <PageHeader
         title="Mechanics"
-        subtitle="Manage mechanics created by the boss."
-        crumbs={[
-          { label: "Boss", to: "/boss/mechanics" },
-          { label: "Mechanics" },
-        ]}
+        subtitle="Boss can view and create mechanics."
+        crumbs={[{ label: "Boss", to: "/boss" }, { label: "Mechanics" }]}
       />
-
-      <div className="flex items-center justify-end">
+      <div className="mt-4 flex justify-end">
         <Link
           to="/boss/mechanics/new"
-          className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800"
+          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
         >
-          + Add mechanic
+          Add mechanic
         </Link>
       </div>
+      {loading && <div className="mt-4 text-sm text-slate-600">Loading...</div>}
 
-      <div className="mt-4 overflow-x-auto rounded-xl border">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-50 text-slate-600">
-            <tr>
-              <th className="px-4 py-3 text-left font-semibold">Name</th>
-              <th className="px-4 py-3 text-left font-semibold">Email</th>
-              <th className="px-4 py-3 text-left font-semibold">Fixed salary</th>
-              <th className="px-4 py-3 text-left font-semibold">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {mechanics.map((m) => (
-              <tr key={m.id} className="border-t">
-                <td className="px-4 py-3">{m.name}</td>
-                <td className="px-4 py-3">{m.email}</td>
-                <td className="px-4 py-3">{m.fixedSalary} €</td>
-                <td className="px-4 py-3">
-                  <button className="rounded-lg border px-3 py-1 hover:bg-slate-50">
-                    View
-                  </button>
-                </td>
+      {error && (
+        <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
+      {!loading && !error && (
+        <div className="mt-4 overflow-hidden rounded-xl border bg-white">
+          <table className="w-full text-sm">
+            <thead className="bg-slate-50 text-left">
+              <tr>
+                <th className="p-3">Name</th>
+                <th className="p-3">Email</th>
+                <th className="p-3">Fixed salary</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {items.map((m) => (
+                <tr key={m.id} className="border-t">
+                  <td className="p-3">{m.name}</td>
+                  <td className="p-3">{m.email}</td>
+                  <td className="p-3">{m.fixedSalary}</td>
+                </tr>
+              ))}
+              {items.length === 0 && (
+                <tr className="border-t">
+                  <td className="p-3 text-slate-500" colSpan={3}>
+                    No mechanics yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
-  )
+  );
 }

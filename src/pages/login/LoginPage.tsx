@@ -1,4 +1,3 @@
-// src/pages/LoginPage.tsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
@@ -10,16 +9,20 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setLoading(true);
 
     try {
-      const user = signIn(email, password);
+      const user = await signIn(email, password);
       navigate(user.role === "BOSS" ? "/boss" : "/mechanic", { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -58,24 +61,25 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              placeholder="Any password (mock)"
+              placeholder="boss123 / mechanic temp password"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+            disabled={loading}
+            className="w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-60"
           >
-            Sign in
+            {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
 
         <div className="mt-4 text-xs text-slate-500">
           <p>
-            <strong>Boss:</strong> boss@garage.com
+            <strong>Boss:</strong> boss@garage.com / boss123
           </p>
           <p>
-            <strong>Mechanic:</strong> must be created by boss first
+            <strong>Mechanic:</strong> use the temp password created by boss
           </p>
         </div>
       </div>

@@ -1,22 +1,43 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import PageHeader from "../../components/PageHeader"
-import { useBossData } from "../../boss/BossDataContext"
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import PageHeader from "../../components/PageHeader";
+import { useAuth } from "../../auth/AuthContext";
+import { createMechanic } from "../../api/boss";
 
 export default function AddMechanicPage() {
-  const navigate = useNavigate()
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [fixedSalary, setFixedSalary] = useState<number>(800)
-  const [password, setPassword] = useState("")
-  const { addMechanic } = useBossData()
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
-  function onSubmit(e: React.FormEvent) {
-    e.preventDefault()
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [fixedSalary, setFixedSalary] = useState<number>(800);
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-    // mocked: later POST /api/boss/mechanics
-    addMechanic({ name, email, fixedSalary })
-    navigate("/boss/mechanics", { replace: true })
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!user) return;
+
+    setError(null);
+    setLoading(true);
+
+    try {
+      await createMechanic(user.token, {
+        name,
+        email,
+        fixedSalary,
+        tempPassword: password,
+      });
+
+      navigate("/boss/mechanics", { replace: true });
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to create mechanic",
+      );
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -31,6 +52,12 @@ export default function AddMechanicPage() {
         ]}
       />
 
+      {error && (
+        <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
       <form onSubmit={onSubmit} className="mt-4 space-y-4">
         <div>
           <label className="text-sm font-medium">Full name</label>
@@ -39,7 +66,6 @@ export default function AddMechanicPage() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            placeholder="e.g. Marko Markovic"
           />
         </div>
 
@@ -51,7 +77,6 @@ export default function AddMechanicPage() {
             onChange={(e) => setEmail(e.target.value)}
             required
             type="email"
-            placeholder="e.g. marko@garage.com"
           />
         </div>
 
@@ -65,9 +90,6 @@ export default function AddMechanicPage() {
             type="number"
             min={0}
           />
-          <p className="mt-1 text-xs text-slate-500">
-            Bonus is +10% of job labor earnings (we’ll calculate later).
-          </p>
         </div>
 
         <div>
@@ -78,20 +100,21 @@ export default function AddMechanicPage() {
             onChange={(e) => setPassword(e.target.value)}
             required
             type="password"
-            placeholder="Set initial password"
           />
         </div>
 
         <div className="flex gap-2">
           <button
-            className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+            disabled={loading}
+            className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
             type="submit"
           >
-            Create mechanic
+            {loading ? "Creating..." : "Create mechanic"}
           </button>
+
           <button
-            className="rounded-lg border px-4 py-2 text-sm hover:bg-slate-50"
             type="button"
+            className="rounded-lg border px-4 py-2 text-sm hover:bg-slate-50"
             onClick={() => navigate("/boss/mechanics")}
           >
             Cancel
@@ -99,5 +122,5 @@ export default function AddMechanicPage() {
         </div>
       </form>
     </div>
-  )
+  );
 }
