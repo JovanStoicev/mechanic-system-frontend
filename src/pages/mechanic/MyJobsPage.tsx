@@ -1,65 +1,43 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import PageHeader from "../../components/PageHeader";
-import { useBossData } from "../../boss/BossDataContext";
 import { useAuth } from "../../auth/AuthContext";
+import { completeJob, getMechanicJobs, type JobRow } from "../../api/jobs";
 
 export default function MyJobsPage() {
   const { user } = useAuth();
-  const { jobs, cars, mechanics } = useBossData();
+  const [jobs, setJobs] = useState<JobRow[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // temporary: pick first mechanic as "me"
-  const myMechanicId = mechanics[0]?.id ?? 1;
-  const myJobs = jobs.filter((j) => j.mechanicId === myMechanicId);
+  useEffect(() => {
+    getMechanicJobs()
+      .then(setJobs)
+      .catch((e) => setError(e instanceof Error ? e.message : "Failed to load jobs"))
+      .finally(() => setLoading(false));
+  }, []);
 
-  const carById = new Map(cars.map((c) => [c.id, c]));
+  async function markDone(id: number) {
+    try {
+      const updated = await completeJob(id);
+      setJobs((current) => current.map((job) => (job.id === id ? updated : job)));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to complete job");
+    }
+  }
 
   return (
     <div>
-      <PageHeader
-        title="My jobs"
-        subtitle={`Logged in as: ${user?.name ?? "Mechanic"}`}
-        crumbs={[
-          { label: "Mechanic", to: "/mechanic/jobs" },
-          { label: "My jobs" },
-        ]}
-      />
-
-      <div className="flex items-center justify-end">
-        <Link
-          to="/mechanic/jobs/new"
-          className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800"
-        >
-          + Create job
-        </Link>
-      </div>
-
-      <div className="mt-4 overflow-x-auto rounded-xl border">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-50 text-slate-600">
-            <tr>
-              <th className="px-4 py-3 text-left font-semibold">Car</th>
-              <th className="px-4 py-3 text-left font-semibold">Description</th>
-              <th className="px-4 py-3 text-left font-semibold">Labor (€)</th>
-              <th className="px-4 py-3 text-left font-semibold">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {myJobs.map((j) => {
-              const car = carById.get(j.carId);
-              return (
-                <tr key={j.id} className="border-t">
-                  <td className="px-4 py-3">
-                    {car ? `${car.brand} ${car.model}` : "Unknown car"}
-                  </td>
-                  <td className="px-4 py-3">{j.description}</td>
-                  <td className="px-4 py-3">{j.totalCost.toFixed(2)}</td>
-                  <td className="px-4 py-3">{j.status}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <PageHeader title="My jobs" subtitle={`Logged in as: ${user?.name ?? "Mechanic"}`} crumbs={[{ label: "Mechanic", to: "/mechanic/jobs" }, { label: "My jobs" }]} />
+      <div className="flex justify-end"><Link to="/mechanic/jobs/new" className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white">+ Create job</Link></div>
+      {error && <div className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</div>}
+      {loading ? <div className="mt-4 text-sm text-slate-600">Loading...</div> : (
+        <div className="mt-4 overflow-x-auto rounded-xl border">
+          <table className="w-full text-sm"><thead className="bg-slate-50 text-slate-600"><tr><th className="px-4 py-3 text-left">Description</th><th className="px-4 py-3 text-left">Parts</th><th className="px-4 py-3 text-left">Labour</th><th className="px-4 py-3 text-left">Total</th><th className="px-4 py-3 text-left">Status</th><th className="px-4 py-3 text-left">Action</th></tr></thead>
+            <tbody>{jobs.map((job) => <tr key={job.id} className="border-t"><td className="px-4 py-3">{job.description}</td><td className="px-4 py-3">€{job.partsCost.toFixed(2)}</td><td className="px-4 py-3">€{job.labourCost.toFixed(2)}</td><td className="px-4 py-3">€{job.totalCost.toFixed(2)}</td><td className="px-4 py-3">{job.status}</td><td className="px-4 py-3">{job.status === "OPEN" && <button onClick={() => markDone(job.id)} className="rounded-lg bg-slate-900 px-3 py-1.5 text-white">Mark done</button>}</td></tr>)}</tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
