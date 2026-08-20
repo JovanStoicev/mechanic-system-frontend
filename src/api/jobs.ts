@@ -1,6 +1,6 @@
 import { api } from "./http";
 
-export type JobStatus = "OPEN" | "DONE";
+export type JobStatus = "OPEN" | "DONE" | "CANCELLED";
 
 export type JobRow = {
   id: number;
@@ -38,6 +38,8 @@ export type CatalogPart = { id: number; name: string; price: number; stockQty: n
 export const getMechanicJobs = () => api<JobRow[]>("/api/me/jobs");
 export const completeJob = (id: number) =>
   api<JobRow>(`/api/me/jobs/${id}/complete`, { method: "PATCH" });
+export const cancelJob = (id: number) =>
+  api<JobRow>(`/api/me/jobs/${id}/cancel`, { method: "PATCH" });
 export const getCatalogCars = () => api<CatalogCar[]>("/api/me/catalog/cars");
 export const getCatalogParts = () => api<CatalogPart[]>("/api/me/catalog/parts");
 export const createJob = (data: {

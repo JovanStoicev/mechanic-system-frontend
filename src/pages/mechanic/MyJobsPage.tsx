@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import PageHeader from "../../components/PageHeader";
 import { useAuth } from "../../auth/AuthContext";
-import { completeJob, getMechanicJobs, type JobRow } from "../../api/jobs";
+import { cancelJob, completeJob, getMechanicJobs, type JobRow } from "../../api/jobs";
 
 export default function MyJobsPage() {
   const { user } = useAuth();
@@ -26,6 +26,16 @@ export default function MyJobsPage() {
     }
   }
 
+  async function cancel(id: number) {
+    if (!window.confirm("Cancel this job and return all reserved parts to stock?")) return;
+    try {
+      const updated = await cancelJob(id);
+      setJobs((current) => current.map((job) => (job.id === id ? updated : job)));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to cancel job");
+    }
+  }
+
   return (
     <div>
       <PageHeader title="My jobs" subtitle={`Logged in as: ${user?.name ?? "Mechanic"}`} crumbs={[{ label: "Mechanic", to: "/mechanic/jobs" }, { label: "My jobs" }]} />
@@ -34,7 +44,7 @@ export default function MyJobsPage() {
       {loading ? <div className="mt-4 text-sm text-slate-600">Loading...</div> : (
         <div className="mt-4 overflow-x-auto rounded-xl border">
           <table className="w-full text-sm"><thead className="bg-slate-50 text-slate-600"><tr><th className="px-4 py-3 text-left">Description</th><th className="px-4 py-3 text-left">Parts</th><th className="px-4 py-3 text-left">Labour</th><th className="px-4 py-3 text-left">Total</th><th className="px-4 py-3 text-left">Status</th><th className="px-4 py-3 text-left">Action</th></tr></thead>
-            <tbody>{jobs.map((job) => <tr key={job.id} className="border-t"><td className="px-4 py-3">{job.description}</td><td className="px-4 py-3">€{job.partsCost.toFixed(2)}</td><td className="px-4 py-3">€{job.labourCost.toFixed(2)}</td><td className="px-4 py-3">€{job.totalCost.toFixed(2)}</td><td className="px-4 py-3">{job.status}</td><td className="px-4 py-3">{job.status === "OPEN" && <button onClick={() => markDone(job.id)} className="rounded-lg bg-slate-900 px-3 py-1.5 text-white">Mark done</button>}</td></tr>)}</tbody>
+            <tbody>{jobs.map((job) => <tr key={job.id} className="border-t"><td className="px-4 py-3">{job.description}</td><td className="px-4 py-3">€{job.partsCost.toFixed(2)}</td><td className="px-4 py-3">€{job.labourCost.toFixed(2)}</td><td className="px-4 py-3">€{job.totalCost.toFixed(2)}</td><td className="px-4 py-3">{job.status}</td><td className="px-4 py-3">{job.status === "OPEN" && <div className="flex gap-2"><button onClick={() => markDone(job.id)} className="rounded-lg bg-slate-900 px-3 py-1.5 text-white">Mark done</button><button onClick={() => cancel(job.id)} className="rounded-lg border border-red-300 px-3 py-1.5 text-red-700">Cancel</button></div>}</td></tr>)}</tbody>
           </table>
         </div>
       )}
