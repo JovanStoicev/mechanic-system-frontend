@@ -3,7 +3,6 @@ import LoginPage from "../pages/login/LoginPage";
 import PartsListPage from "../pages/boss/PartsListPage";
 import AddPartPage from "../pages/boss/AddPartPage";
 import PartRequestsPage from "../pages/boss/PartRequestsPage";
-import MechanicHome from "../pages/mechanic/MechanicHome";
 import ProtectedRoute from "./ProtectedRoute";
 import BossLayout from "../layouts/BossLayout";
 import MechanicsListPage from "../pages/boss/MechanicsListPage";

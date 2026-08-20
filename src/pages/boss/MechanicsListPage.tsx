@@ -12,6 +12,7 @@ export default function MechanicsListPage() {
 
   useEffect(() => {
     let cancelled = false;
+
     async function load() {
       if (!user) return;
       setLoading(true);
@@ -26,6 +27,7 @@ export default function MechanicsListPage() {
         if (!cancelled) setLoading(false);
       }
     }
+
     load();
     return () => {
       cancelled = true;
@@ -39,6 +41,7 @@ export default function MechanicsListPage() {
         subtitle="Boss can view and create mechanics."
         crumbs={[{ label: "Boss", to: "/boss" }, { label: "Mechanics" }]}
       />
+
       <div className="mt-4 flex justify-end">
         <Link
           to="/boss/mechanics/new"
@@ -47,6 +50,7 @@ export default function MechanicsListPage() {
           Add mechanic
         </Link>
       </div>
+
       {loading && <div className="mt-4 text-sm text-slate-600">Loading...</div>}
 
       {error && (
@@ -73,9 +77,10 @@ export default function MechanicsListPage() {
                   <td className="p-3">{m.fixedSalary}</td>
                 </tr>
               ))}
+
               {items.length === 0 && (
                 <tr className="border-t">
-                  <td className="p-3 text-slate-500" colSpan={3}>
+                  <td colSpan={3} className="p-3 text-slate-500">
                     No mechanics yet.
                   </td>
                 </tr>

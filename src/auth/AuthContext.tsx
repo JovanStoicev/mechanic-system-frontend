@@ -1,9 +1,11 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import type { User } from "../types/auth";
+import { login } from "../api/authApi";
 
 type AuthContextValue = {
   user: User | null;
+  ready: boolean;
   signIn: (email: string, password: string) => Promise<User>;
   signOut: () => void;
 };
@@ -12,63 +14,29 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 const LS_KEY = "garage_auth_v1";
 
-type LoginResponse = {
-  token: string;
-  userId: number;
-  email: string;
-  name: string;
-  role: "ROLE_BOSS" | "ROLE_MECHANIC";
-};
-
-function mapRole(role: LoginResponse["role"]): User["role"] {
-  return role === "ROLE_BOSS" ? "BOSS" : "MECHANIC";
+function loadFromStorage(): User | null {
+  const raw = localStorage.getItem(LS_KEY);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as User;
+  } catch {
+    localStorage.removeItem(LS_KEY);
+    return null;
+  }
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-
-  // restore session on refresh
-  useEffect(() => {
-    const raw = localStorage.getItem(LS_KEY);
-    if (!raw) return;
-    try {
-      const parsed = JSON.parse(raw) as User;
-      setUser(parsed);
-    } catch {
-      localStorage.removeItem(LS_KEY);
-    }
-  }, []);
+  // load immediately (before any route guard runs)
+  const [user, setUser] = useState<User | null>(() => loadFromStorage());
+  const [ready] = useState(true);
 
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
+      ready,
 
       signIn: async (email: string, password: string) => {
-        const res = await fetch("http://localhost:8080/api/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: email.trim(),
-            password,
-          }),
-        });
-
-        if (!res.ok) {
-          // backend should return 401 for invalid credentials
-          const msg =
-            res.status === 401 ? "Invalid email or password." : "Login failed.";
-          throw new Error(msg);
-        }
-
-        const data = (await res.json()) as LoginResponse;
-
-        const u: User = {
-          id: data.userId,
-          email: data.email,
-          name: data.name,
-          role: mapRole(data.role),
-          token: data.token,
-        };
+        const u = await login(email, password);
 
         setUser(u);
         localStorage.setItem(LS_KEY, JSON.stringify(u));
@@ -80,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem(LS_KEY);
       },
     }),
-    [user],
+    [user, ready],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

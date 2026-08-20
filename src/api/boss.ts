@@ -14,34 +14,15 @@ export async function createMechanic(
     tempPassword: string;
   },
 ) {
-  const res = await fetch("http://localhost:8080/api/boss/mechanics", {
+  void token;
+  return api<MechanicDto>("/api/boss/mechanics", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
     body: JSON.stringify(data),
   });
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(text || "Failed to create mechanic");
-  }
-
-  return res.json();
 }
 
 export async function getMechanics(token: string): Promise<MechanicDto[]> {
-  const res = await fetch("http://localhost:8080/api/boss/mechanics", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(text || "Failed to load mechanics");
-  }
-
-  return res.json();
+  void token;
+  return api<MechanicDto[]>("/api/boss/mechanics");
 }
+import { api } from "./http";
