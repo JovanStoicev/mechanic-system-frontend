@@ -89,6 +89,14 @@ export default function BossLayout() {
                 Jobs
               </NavLink>
 
+              <NavLink
+                to="/boss/salaries"
+                end
+                className={({ isActive }) => linkClass(isActive)}
+              >
+                Salaries
+              </NavLink>
+
 
               <div className="mt-3 text-xs font-semibold text-slate-500 px-3 py-2">
                 Next (later)
