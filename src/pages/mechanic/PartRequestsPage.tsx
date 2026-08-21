@@ -4,7 +4,7 @@ import { createPartRequest, getMyPartRequests, type PartRequest } from "../../ap
 import { getCatalogParts, type CatalogPart } from "../../api/jobs";
 import PageHeader from "../../components/PageHeader";
 
-const badge = (status: PartRequest["status"]) => status === "PENDING" ? "bg-amber-100 text-amber-800" : status === "APPROVED" ? "bg-emerald-100 text-emerald-800" : "bg-rose-100 text-rose-800";
+const badge = (status: PartRequest["status"]) => status === "PENDING" ? "bg-amber-100 text-amber-800" : status === "APPROVED" ? "bg-blue-100 text-blue-800" : status === "RECEIVED" ? "bg-emerald-100 text-emerald-800" : "bg-rose-100 text-rose-800";
 
 export default function PartRequestsPage() {
   const [parts, setParts] = useState<CatalogPart[]>([]); const [requests, setRequests] = useState<PartRequest[]>([]);
