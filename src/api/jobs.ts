@@ -6,6 +6,7 @@ export type JobRow = {
   id: number;
   carId: number;
   description: string;
+  mileage: number;
   partsCost: number;
   labourCost: number;
   totalCost: number;
@@ -45,6 +46,7 @@ export const getCatalogParts = () => api<CatalogPart[]>("/api/me/catalog/parts")
 export const createJob = (data: {
   carId: number;
   description: string;
+  mileage: number;
   labourCost: number;
   parts: Array<{ partId: number; qty: number }>;
 }) => api<JobRow>("/api/me/jobs", { method: "POST", body: JSON.stringify(data) });

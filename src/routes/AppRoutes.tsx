@@ -9,6 +9,7 @@ import MechanicsListPage from "../pages/boss/MechanicsListPage";
 import AddMechanicPage from "../pages/boss/AddMechanicPage";
 import CarsListPage from "../pages/boss/CarListPage";
 import AddCarPage from "../pages/boss/AddCarPage";
+import CarHistoryPage from "../pages/boss/CarHistoryPage";
 import JobsListPage from "../pages/boss/JobListPage";
 import JobDetailsPage from "../pages/boss/JobDetailsPage";
 import MechanicLayout from "../layouts/MechanicLayout";
@@ -37,6 +38,7 @@ export default function AppRoutes() {
         <Route path="part-requests" element={<PartRequestsPage />} />
         <Route path="cars" element={<CarsListPage />} />
         <Route path="cars/new" element={<AddCarPage />} />
+        <Route path="cars/:id" element={<CarHistoryPage />} />
         <Route path="jobs" element={<JobsListPage />} />
         <Route path="jobs/:id" element={<JobDetailsPage />} />
       </Route>

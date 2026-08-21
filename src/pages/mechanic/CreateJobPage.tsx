@@ -11,6 +11,7 @@ export default function CreateJobPage() {
   const [parts, setParts] = useState<CatalogPart[]>([]);
   const [carId, setCarId] = useState(0);
   const [description, setDescription] = useState("");
+  const [mileage, setMileage] = useState(0);
   const [labourCost, setLabourCost] = useState(0);
   const [lines, setLines] = useState<PartLine[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +34,7 @@ export default function CreateJobPage() {
   async function submit(event: React.FormEvent) {
     event.preventDefault(); setError(null); setSaving(true);
     try {
-      await createJob({ carId, description, labourCost, parts: lines });
+      await createJob({ carId, description, mileage, labourCost, parts: lines });
       navigate("/mechanic/jobs", { replace: true });
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to create job");
@@ -46,6 +47,7 @@ export default function CreateJobPage() {
     <form onSubmit={submit} className="space-y-5">
       <div><label className="text-sm font-medium">Car</label><select className="mt-1 w-full rounded-lg border p-2" value={carId} onChange={(e) => setCarId(Number(e.target.value))} required>{cars.map((car) => <option key={car.id} value={car.id}>{car.brand} {car.model} — {car.vin}</option>)}</select></div>
       <div><label className="text-sm font-medium">Work performed</label><textarea className="mt-1 w-full rounded-lg border p-2" value={description} onChange={(e) => setDescription(e.target.value)} required rows={3} /></div>
+      <div><label className="text-sm font-medium">Mileage (km)</label><input className="mt-1 w-full rounded-lg border p-2" type="number" min="0" step="1" value={mileage} onChange={(e) => setMileage(Number(e.target.value))} required /><p className="mt-1 text-xs text-slate-500">Enter the current odometer reading. It cannot be lower than the car's latest recorded mileage.</p></div>
       <div><label className="text-sm font-medium">Labour charge (€)</label><input className="mt-1 w-full rounded-lg border p-2" type="number" min="0" step="0.01" value={labourCost} onChange={(e) => setLabourCost(Number(e.target.value))} required /></div>
       <section className="rounded-xl border p-4"><div className="flex items-center justify-between"><h2 className="font-semibold">Parts used</h2><button type="button" onClick={addPart} className="rounded-lg border px-3 py-1.5 text-sm">+ Add part</button></div>
         <div className="mt-3 space-y-3">{lines.map((line, index) => { const selected = partsById.get(line.partId); return <div key={index} className="grid grid-cols-12 gap-2"><select className="col-span-8 rounded-lg border p-2" value={line.partId} onChange={(e) => setLines((current) => current.map((item, i) => i === index ? { ...item, partId: Number(e.target.value), qty: 1 } : item))}>{parts.map((part) => <option key={part.id} value={part.id} disabled={part.stockQty === 0}>{part.name} — €{part.price.toFixed(2)} (stock {part.stockQty})</option>)}</select><input className="col-span-2 rounded-lg border p-2" type="number" min="1" max={selected?.stockQty ?? 1} value={line.qty} onChange={(e) => setLines((current) => current.map((item, i) => i === index ? { ...item, qty: Number(e.target.value) } : item))} /><button type="button" className="col-span-2 rounded-lg border" onClick={() => setLines((current) => current.filter((_, i) => i !== index))}>Remove</button></div>; })}</div>
