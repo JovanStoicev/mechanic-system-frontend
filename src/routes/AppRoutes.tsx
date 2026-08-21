@@ -16,6 +16,7 @@ import MechanicLayout from "../layouts/MechanicLayout";
 import CreateJobPage from "../pages/mechanic/CreateJobPage";
 import MyJobsPage from "../pages/mechanic/MyJobsPage";
 import SalaryReportPage from "../pages/boss/SalaryReportPage";
+import MechanicPartRequestsPage from "../pages/mechanic/PartRequestsPage";
 
 export default function AppRoutes() {
   return (
@@ -56,6 +57,7 @@ export default function AppRoutes() {
         <Route index element={<Navigate to="/mechanic/jobs" replace />} />
         <Route path="jobs" element={<MyJobsPage />} />
         <Route path="jobs/new" element={<CreateJobPage />} />
+        <Route path="part-requests" element={<MechanicPartRequestsPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/login" replace />} />

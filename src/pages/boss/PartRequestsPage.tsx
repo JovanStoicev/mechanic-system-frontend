@@ -1,88 +1,13 @@
-import PageHeader from "../../components/PageHeader"
+import { useEffect, useState } from "react";
+import { approvePartRequest, getBossPartRequests, rejectPartRequest, type PartRequest } from "../../api/partRequests";
+import PageHeader from "../../components/PageHeader";
 
-type RequestStatus = "PENDING" | "APPROVED" | "REJECTED"
-
-type PartRequestRow = {
-  id: number
-  mechanicName: string
-  partName: string
-  qty: number
-  status: RequestStatus
-}
-
-const MOCK_REQUESTS: PartRequestRow[] = [
-  { id: 1, mechanicName: "Marko Markovic", partName: "Brake pads (front)", qty: 1, status: "PENDING" },
-  { id: 2, mechanicName: "Ivan Ilic", partName: "Oil filter", qty: 2, status: "APPROVED" },
-  { id: 3, mechanicName: "Ivan Ilic", partName: "Spark plug", qty: 4, status: "REJECTED" },
-]
-
-function badge(status: RequestStatus) {
-  if (status === "PENDING") return "bg-amber-100 text-amber-800"
-  if (status === "APPROVED") return "bg-emerald-100 text-emerald-800"
-  return "bg-rose-100 text-rose-800"
-}
-
+const badge = (status: PartRequest["status"]) => status === "PENDING" ? "bg-amber-100 text-amber-800" : status === "APPROVED" ? "bg-emerald-100 text-emerald-800" : "bg-rose-100 text-rose-800";
 export default function PartRequestsPage() {
-  return (
-    <div>
-      <PageHeader
-        title="Part requests"
-        subtitle="Approve or reject requests from mechanics."
-        crumbs={[
-          { label: "Boss", to: "/boss/mechanics" },
-          { label: "Part requests" },
-        ]}
-      />
-
-      <div className="mt-4 overflow-x-auto rounded-xl border">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-50 text-slate-600">
-            <tr>
-              <th className="px-4 py-3 text-left font-semibold">Mechanic</th>
-              <th className="px-4 py-3 text-left font-semibold">Part</th>
-              <th className="px-4 py-3 text-left font-semibold">Qty</th>
-              <th className="px-4 py-3 text-left font-semibold">Status</th>
-              <th className="px-4 py-3 text-left font-semibold">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {MOCK_REQUESTS.map((r) => (
-              <tr key={r.id} className="border-t">
-                <td className="px-4 py-3">{r.mechanicName}</td>
-                <td className="px-4 py-3">{r.partName}</td>
-                <td className="px-4 py-3">{r.qty}</td>
-                <td className="px-4 py-3">
-                  <span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${badge(r.status)}`}>
-                    {r.status}
-                  </span>
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex gap-2">
-                    <button
-                      className="rounded-lg border px-3 py-1 hover:bg-slate-50 disabled:opacity-50"
-                      disabled={r.status !== "PENDING"}
-                      onClick={() => console.log("approve", r.id)}
-                    >
-                      Approve
-                    </button>
-                    <button
-                      className="rounded-lg border px-3 py-1 hover:bg-slate-50 disabled:opacity-50"
-                      disabled={r.status !== "PENDING"}
-                      onClick={() => console.log("reject", r.id)}
-                    >
-                      Reject
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <p className="mt-3 text-xs text-slate-500">
-        Next step: wire Approve/Reject to state + later backend endpoints.
-      </p>
-    </div>
-  )
+  const [requests, setRequests] = useState<PartRequest[]>([]); const [error, setError] = useState<string | null>(null); const [workingId, setWorkingId] = useState<number | null>(null);
+  useEffect(() => { getBossPartRequests().then(setRequests).catch((e: Error) => setError(e.message)); }, []);
+  async function decide(id: number, decision: "approve" | "reject") { setWorkingId(id); setError(null); try { const updated = decision === "approve" ? await approvePartRequest(id) : await rejectPartRequest(id); setRequests((current) => current.map((request) => request.id === id ? updated : request)); } catch (e) { setError(e instanceof Error ? e.message : "Could not update request."); } finally { setWorkingId(null); } }
+  return <div><PageHeader title="Part requests" subtitle="Approve an order and add its quantity to stock, or reject it." crumbs={[{ label: "Boss", to: "/boss/mechanics" }, { label: "Part requests" }]} />
+    {error && <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
+    <div className="mt-4 overflow-x-auto rounded-xl border"><table className="w-full text-sm"><thead className="bg-slate-50 text-slate-600"><tr><th className="px-4 py-3 text-left">Mechanic</th><th className="px-4 py-3 text-left">Part</th><th className="px-4 py-3 text-left">Qty</th><th className="px-4 py-3 text-left">Note</th><th className="px-4 py-3 text-left">Status</th><th className="px-4 py-3 text-left">Actions</th></tr></thead><tbody>{requests.map((request) => <tr key={request.id} className="border-t"><td className="px-4 py-3">{request.mechanicName}</td><td className="px-4 py-3">{request.partName}</td><td className="px-4 py-3">{request.quantity}</td><td className="px-4 py-3">{request.note || "—"}</td><td className="px-4 py-3"><span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${badge(request.status)}`}>{request.status}</span></td><td className="px-4 py-3"><div className="flex gap-2"><button className="rounded-lg border px-3 py-1 disabled:opacity-50" disabled={request.status !== "PENDING" || workingId === request.id} onClick={() => decide(request.id, "approve")}>Approve</button><button className="rounded-lg border px-3 py-1 disabled:opacity-50" disabled={request.status !== "PENDING" || workingId === request.id} onClick={() => decide(request.id, "reject")}>Reject</button></div></td></tr>)}</tbody></table>{requests.length === 0 && <p className="p-4 text-sm text-slate-500">No part requests yet.</p>}</div></div>;
 }

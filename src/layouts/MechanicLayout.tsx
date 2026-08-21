@@ -59,11 +59,19 @@ export default function MechanicLayout() {
                 My jobs
               </NavLink>
 
+              <NavLink
+                to="/mechanic/part-requests"
+                end
+                className={({ isActive }) => linkClass(isActive)}
+              >
+                Part requests
+              </NavLink>
+
               <div className="mt-3 text-xs font-semibold text-slate-500 px-3 py-2">
                 Next (later)
               </div>
               <div className="px-3 py-2 text-sm text-slate-500">
-                Paychecks • Part requests
+                Paychecks
               </div>
             </nav>
           </aside>
