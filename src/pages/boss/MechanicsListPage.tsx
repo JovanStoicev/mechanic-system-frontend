@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import PageHeader from "../../components/PageHeader";
 import { useAuth } from "../../auth/AuthContext";
-import { getMechanics, type MechanicDto } from "../../api/boss";
+import { deleteMechanic, getMechanics, type MechanicDto } from "../../api/boss";
 
 export default function MechanicsListPage() {
   const { user } = useAuth();
   const [items, setItems] = useState<MechanicDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [workingId, setWorkingId] = useState<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -34,11 +35,25 @@ export default function MechanicsListPage() {
     };
   }, [user]);
 
+  async function remove(mechanic: MechanicDto) {
+    if (!window.confirm(`Permanently delete ${mechanic.name}? This also deletes all of their jobs and part requests and cannot be undone.`)) return;
+    setWorkingId(mechanic.id);
+    setError(null);
+    try {
+      await deleteMechanic(mechanic.id);
+      setItems((current) => current.filter((item) => item.id !== mechanic.id));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to delete mechanic");
+    } finally {
+      setWorkingId(null);
+    }
+  }
+
   return (
     <div>
       <PageHeader
         title="Mechanics"
-        subtitle="Boss can view and create mechanics."
+        subtitle="Create mechanics or permanently remove accounts that are no longer needed."
         crumbs={[{ label: "Boss", to: "/boss" }, { label: "Mechanics" }]}
       />
 
@@ -67,6 +82,7 @@ export default function MechanicsListPage() {
                 <th className="p-3">Name</th>
                 <th className="p-3">Email</th>
                 <th className="p-3">Fixed salary</th>
+                <th className="p-3">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -75,12 +91,13 @@ export default function MechanicsListPage() {
                   <td className="p-3">{m.name}</td>
                   <td className="p-3">{m.email}</td>
                   <td className="p-3">{m.fixedSalary}</td>
+                  <td className="p-3"><button onClick={() => remove(m)} disabled={workingId === m.id} className="rounded-lg border border-red-200 px-3 py-1 text-red-700 disabled:opacity-50">{workingId === m.id ? "Deleting..." : "Delete"}</button></td>
                 </tr>
               ))}
 
               {items.length === 0 && (
                 <tr className="border-t">
-                  <td colSpan={3} className="p-3 text-slate-500">
+                  <td colSpan={4} className="p-3 text-slate-500">
                     No mechanics yet.
                   </td>
                 </tr>
