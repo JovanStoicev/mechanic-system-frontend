@@ -1,20 +1,27 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import PageHeader from "../../components/PageHeader"
+import { createBossPart } from "../../api/parts"
 
 export default function AddPartPage() {
   const navigate = useNavigate()
   const [name, setName] = useState("")
   const [price, setPrice] = useState<number>(0)
   const [stockQty, setStockQty] = useState<number>(0)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
-
-    // mocked: later POST /api/boss/parts
-    console.log({ name, price, stockQty })
-
-    navigate("/boss/parts", { replace: true })
+    setSaving(true)
+    setError(null)
+    try {
+      await createBossPart({ name, price, stockQty })
+      navigate("/boss/parts", { replace: true })
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not create part.")
+      setSaving(false)
+    }
   }
 
   return (
@@ -29,6 +36,7 @@ export default function AddPartPage() {
         ]}
       />
 
+      {error && <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
       <form onSubmit={onSubmit} className="space-y-4">
         <div>
           <label className="text-sm font-medium">Part name</label>
@@ -68,10 +76,11 @@ export default function AddPartPage() {
 
         <div className="flex gap-2">
           <button
-            className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+            className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
             type="submit"
+            disabled={saving}
           >
-            Save
+            {saving ? "Saving..." : "Save"}
           </button>
           <button
             className="rounded-lg border px-4 py-2 text-sm hover:bg-slate-50"

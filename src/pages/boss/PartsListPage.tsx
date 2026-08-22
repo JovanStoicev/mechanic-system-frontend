@@ -1,75 +1,21 @@
-import { Link } from "react-router-dom"
-import PageHeader from "../../components/PageHeader"
-
-type PartRow = {
-  id: number
-  name: string
-  price: number
-  stockQty: number
-}
-
-const MOCK_PARTS: PartRow[] = [
-  { id: 1, name: "Oil filter", price: 12, stockQty: 8 },
-  { id: 2, name: "Brake pads (front)", price: 55, stockQty: 2 },
-  { id: 3, name: "Spark plug", price: 9, stockQty: 20 },
-]
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { getBossParts, type Part } from "../../api/parts";
+import PageHeader from "../../components/PageHeader";
 
 export default function PartsListPage() {
-  return (
-    <div>
-      <PageHeader
-        title="Parts"
-        subtitle="Inventory overview. Later we’ll connect this to ordering and stock movements."
-        crumbs={[
-          { label: "Boss", to: "/boss/mechanics" },
-          { label: "Parts" },
-        ]}
-      />
+  const [parts, setParts] = useState<Part[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-      <div className="flex items-center justify-end">
-        <Link
-          to="/boss/parts/new"
-          className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800"
-        >
-          + Add part
-        </Link>
-      </div>
+  useEffect(() => {
+    getBossParts().then(setParts).catch((e: Error) => setError(e.message)).finally(() => setLoading(false));
+  }, []);
 
-      <div className="mt-4 overflow-x-auto rounded-xl border">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-50 text-slate-600">
-            <tr>
-              <th className="px-4 py-3 text-left font-semibold">Part</th>
-              <th className="px-4 py-3 text-left font-semibold">Price (€)</th>
-              <th className="px-4 py-3 text-left font-semibold">Stock</th>
-              <th className="px-4 py-3 text-left font-semibold">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {MOCK_PARTS.map((p) => {
-              const low = p.stockQty <= 3
-              return (
-                <tr key={p.id} className="border-t">
-                  <td className="px-4 py-3">{p.name}</td>
-                  <td className="px-4 py-3">{p.price}</td>
-                  <td className="px-4 py-3">{p.stockQty}</td>
-                  <td className="px-4 py-3">
-                    {low ? (
-                      <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800">
-                        Low stock
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-800">
-                        OK
-                      </span>
-                    )}
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  )
+  return <div>
+    <PageHeader title="Parts" subtitle="Live inventory shared with mechanics and part requests." crumbs={[{ label: "Boss", to: "/boss/mechanics" }, { label: "Parts" }]} />
+    <div className="flex items-center justify-end"><Link to="/boss/parts/new" className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800">+ Add part</Link></div>
+    {error && <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
+    {loading ? <p className="mt-4 text-sm text-slate-500">Loading...</p> : <div className="mt-4 overflow-x-auto rounded-xl border"><table className="w-full text-sm"><thead className="bg-slate-50 text-slate-600"><tr><th className="px-4 py-3 text-left">Part</th><th className="px-4 py-3 text-left">Price (€)</th><th className="px-4 py-3 text-left">Stock</th><th className="px-4 py-3 text-left">Status</th></tr></thead><tbody>{parts.map((part) => { const low = part.stockQty <= 3; return <tr key={part.id} className="border-t"><td className="px-4 py-3">{part.name}</td><td className="px-4 py-3">{part.price.toFixed(2)}</td><td className="px-4 py-3">{part.stockQty}</td><td className="px-4 py-3"><span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${low ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-800"}`}>{low ? "Low stock" : "OK"}</span></td></tr>; })}</tbody></table>{parts.length === 0 && <p className="p-4 text-sm text-slate-500">No parts in inventory.</p>}</div>}
+  </div>;
 }

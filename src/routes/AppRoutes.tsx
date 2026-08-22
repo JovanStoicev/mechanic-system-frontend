@@ -17,6 +17,7 @@ import CreateJobPage from "../pages/mechanic/CreateJobPage";
 import MyJobsPage from "../pages/mechanic/MyJobsPage";
 import SalaryReportPage from "../pages/boss/SalaryReportPage";
 import MechanicPartRequestsPage from "../pages/mechanic/PartRequestsPage";
+import FinanceDashboardPage from "../pages/boss/FinanceDashboardPage";
 
 export default function AppRoutes() {
   return (
@@ -44,6 +45,7 @@ export default function AppRoutes() {
         <Route path="jobs" element={<JobsListPage />} />
         <Route path="jobs/:id" element={<JobDetailsPage />} />
         <Route path="salaries" element={<SalaryReportPage />} />
+        <Route path="finance" element={<FinanceDashboardPage />} />
       </Route>
 
       <Route
