@@ -44,11 +44,11 @@ export default function MechanicLayout() {
               </div>
 
               <NavLink
-                to="/mechanic/jobs/new"
+                to="/mechanic/problems"
                 end
                 className={({ isActive }) => linkClass(isActive)}
               >
-                Create job
+                Assigned problems
               </NavLink>
 
               <NavLink
@@ -66,13 +66,6 @@ export default function MechanicLayout() {
               >
                 Part requests
               </NavLink>
-
-              <div className="mt-3 text-xs font-semibold text-slate-500 px-3 py-2">
-                Next (later)
-              </div>
-              <div className="px-3 py-2 text-sm text-slate-500">
-                Paychecks
-              </div>
             </nav>
           </aside>
 

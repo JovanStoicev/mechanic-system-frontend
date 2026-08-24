@@ -110,14 +110,6 @@ export default function BossLayout() {
               >
                 Finance
               </NavLink>
-
-
-              <div className="mt-3 text-xs font-semibold text-slate-500 px-3 py-2">
-                Next (later)
-              </div>
-              <div className="px-3 py-2 text-sm text-slate-500">
-                Jobs • Parts • Earnings
-              </div>
             </nav>
           </aside>
 

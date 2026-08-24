@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 
 export default function LoginPage() {
@@ -18,7 +18,7 @@ export default function LoginPage() {
 
     try {
       const user = await signIn(email, password);
-      navigate(user.role === "BOSS" ? "/boss" : "/mechanic", { replace: true });
+      navigate(user.role === "BOSS" ? "/boss" : user.role === "MECHANIC" ? "/mechanic" : "/customer", { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
@@ -73,6 +73,8 @@ export default function LoginPage() {
             {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
+
+        <p className="mt-4 text-center text-sm">New customer? <Link className="font-medium underline" to="/register">Create account</Link></p>
 
         <div className="mt-4 text-xs text-slate-500">
           <p>

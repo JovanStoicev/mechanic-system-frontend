@@ -13,20 +13,27 @@ import CarHistoryPage from "../pages/boss/CarHistoryPage";
 import JobsListPage from "../pages/boss/JobListPage";
 import JobDetailsPage from "../pages/boss/JobDetailsPage";
 import MechanicLayout from "../layouts/MechanicLayout";
-import CreateJobPage from "../pages/mechanic/CreateJobPage";
 import MyJobsPage from "../pages/mechanic/MyJobsPage";
 import SalaryReportPage from "../pages/boss/SalaryReportPage";
 import MechanicPartRequestsPage from "../pages/mechanic/PartRequestsPage";
 import FinanceDashboardPage from "../pages/boss/FinanceDashboardPage";
 import CustomerListPage from "../pages/boss/CustomerListPage";
-import CustomerFormPage from "../pages/boss/CustomerFormPage";
 import CustomerDetailsPage from "../pages/boss/CustomerDetailsPage";
+import RegisterCustomerPage from "../pages/login/RegisterCustomerPage";
+import CustomerLayout from "../layouts/CustomerLayout";
+import MyCarsPage from "../pages/customer/MyCarsPage";
+import CustomerCarFormPage from "../pages/customer/CustomerCarFormPage";
+import CreateProblemPage from "../pages/customer/CreateProblemPage";
+import CustomerProblemsPage from "../pages/customer/CustomerProblemsPage";
+import AssignedProblemsPage from "../pages/mechanic/AssignedProblemsPage";
+import CreateProblemJobPage from "../pages/mechanic/CreateProblemJobPage";
 
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterCustomerPage />} />
 
       <Route
         path="/boss"
@@ -43,9 +50,7 @@ export default function AppRoutes() {
         <Route path="parts/new" element={<AddPartPage />} />
         <Route path="part-requests" element={<PartRequestsPage />} />
         <Route path="customers" element={<CustomerListPage />} />
-        <Route path="customers/new" element={<CustomerFormPage />} />
         <Route path="customers/:id" element={<CustomerDetailsPage />} />
-        <Route path="customers/:id/edit" element={<CustomerFormPage />} />
         <Route path="cars" element={<CarsListPage />} />
         <Route path="cars/new" element={<AddCarPage />} />
         <Route path="cars/:id" element={<CarHistoryPage />} />
@@ -65,8 +70,18 @@ export default function AppRoutes() {
       >
         <Route index element={<Navigate to="/mechanic/jobs" replace />} />
         <Route path="jobs" element={<MyJobsPage />} />
-        <Route path="jobs/new" element={<CreateJobPage />} />
         <Route path="part-requests" element={<MechanicPartRequestsPage />} />
+        <Route path="problems" element={<AssignedProblemsPage />} />
+        <Route path="problems/:id/job" element={<CreateProblemJobPage />} />
+      </Route>
+
+      <Route path="/customer" element={<ProtectedRoute allow="CUSTOMER"><CustomerLayout /></ProtectedRoute>}>
+        <Route index element={<Navigate to="/customer/cars" replace />} />
+        <Route path="cars" element={<MyCarsPage />} />
+        <Route path="cars/new" element={<CustomerCarFormPage />} />
+        <Route path="cars/:id/edit" element={<CustomerCarFormPage />} />
+        <Route path="problems" element={<CustomerProblemsPage />} />
+        <Route path="problems/new" element={<CreateProblemPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/login" replace />} />

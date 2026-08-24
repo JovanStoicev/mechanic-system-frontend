@@ -1,12 +1,14 @@
 import { createContext, useContext, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import type { User } from "../types/auth";
-import { login } from "../api/authApi";
+import { login, registerCustomer } from "../api/authApi";
+import type { CustomerRegistration } from "../api/authApi";
 
 type AuthContextValue = {
   user: User | null;
   ready: boolean;
   signIn: (email: string, password: string) => Promise<User>;
+  register: (data: CustomerRegistration) => Promise<User>;
   signOut: () => void;
 };
 
@@ -38,6 +40,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signIn: async (email: string, password: string) => {
         const u = await login(email, password);
 
+        setUser(u);
+        localStorage.setItem(LS_KEY, JSON.stringify(u));
+        return u;
+      },
+
+      register: async (data) => {
+        const u = await registerCustomer(data);
         setUser(u);
         localStorage.setItem(LS_KEY, JSON.stringify(u));
         return u;
