@@ -18,6 +18,9 @@ import MyJobsPage from "../pages/mechanic/MyJobsPage";
 import SalaryReportPage from "../pages/boss/SalaryReportPage";
 import MechanicPartRequestsPage from "../pages/mechanic/PartRequestsPage";
 import FinanceDashboardPage from "../pages/boss/FinanceDashboardPage";
+import CustomerListPage from "../pages/boss/CustomerListPage";
+import CustomerFormPage from "../pages/boss/CustomerFormPage";
+import CustomerDetailsPage from "../pages/boss/CustomerDetailsPage";
 
 export default function AppRoutes() {
   return (
@@ -39,6 +42,10 @@ export default function AppRoutes() {
         <Route path="parts" element={<PartsListPage />} />
         <Route path="parts/new" element={<AddPartPage />} />
         <Route path="part-requests" element={<PartRequestsPage />} />
+        <Route path="customers" element={<CustomerListPage />} />
+        <Route path="customers/new" element={<CustomerFormPage />} />
+        <Route path="customers/:id" element={<CustomerDetailsPage />} />
+        <Route path="customers/:id/edit" element={<CustomerFormPage />} />
         <Route path="cars" element={<CarsListPage />} />
         <Route path="cars/new" element={<AddCarPage />} />
         <Route path="cars/:id" element={<CarHistoryPage />} />

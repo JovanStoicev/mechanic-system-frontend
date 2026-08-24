@@ -7,6 +7,8 @@ export type CarRow = {
   vin: string;
   engineType: string;
   horsePower: number;
+  customerId: number | null;
+  customerName: string | null;
 };
 
 export type CarHistory = CarRow & {
@@ -27,3 +29,16 @@ export type CarHistory = CarRow & {
 
 export const getCars = () => api<CarRow[]>("/api/boss/cars");
 export const getCarHistory = (id: number) => api<CarHistory>(`/api/boss/cars/${id}/history`);
+export const createCar = (input: {
+  brand: string;
+  model: string;
+  vin: string;
+  engineType: string;
+  horsePower: number;
+  customerId: number | null;
+}) => api<CarRow>("/api/boss/cars", { method: "POST", body: JSON.stringify(input) });
+export const assignCarCustomer = (carId: number, customerId: number | null) =>
+  api<CarRow>(`/api/boss/cars/${carId}/customer`, {
+    method: "PATCH",
+    body: JSON.stringify({ customerId }),
+  });

@@ -75,6 +75,13 @@ export default function BossLayout() {
               </NavLink>
               
               <NavLink
+                to="/boss/customers"
+                className={({ isActive }) => linkClass(isActive)}
+              >
+                Customers
+              </NavLink>
+
+              <NavLink
                 to="/boss/cars"
                 end
                 className={({ isActive }) => linkClass(isActive)}
