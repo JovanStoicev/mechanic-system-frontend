@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import PageHeader from "../../components/PageHeader";
 import { useAuth } from "../../auth/AuthContext";
 import { cancelJob, completeJob, getMechanicJobs, type JobRow } from "../../api/jobs";
@@ -39,7 +38,6 @@ export default function MyJobsPage() {
   return (
     <div>
       <PageHeader title="My jobs" subtitle={`Logged in as: ${user?.name ?? "Mechanic"}`} crumbs={[{ label: "Mechanic", to: "/mechanic/jobs" }, { label: "My jobs" }]} />
-      <div className="flex justify-end"><Link to="/mechanic/jobs/new" className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white">+ Create job</Link></div>
       {error && <div className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</div>}
       {loading ? <div className="mt-4 text-sm text-slate-600">Loading...</div> : (
         <div className="mt-4 overflow-x-auto rounded-xl border">

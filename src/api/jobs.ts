@@ -1,6 +1,6 @@
 import { api } from "./http";
 
-export type JobStatus = "OPEN" | "DONE" | "CANCELLED";
+export type JobStatus = "PENDING_APPROVAL" | "OPEN" | "REJECTED" | "DONE" | "CANCELLED";
 
 export type JobRow = {
   id: number;

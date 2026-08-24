@@ -21,9 +21,9 @@ export default function AssignedProblemsPage() {
     <div className="mt-4 space-y-3">{items.map((problem) => <article className="rounded-lg border p-3" key={problem.id}>
       <div className="flex justify-between"><b>{problem.carName} • {problem.customerName}</b><span>{problem.status}</span></div>
       <p className="my-2">{problem.description}</p>
-      {problem.status === "SUBMITTED"
-        ? <Link className="inline-block rounded-lg bg-slate-900 px-3 py-2 text-sm text-white" to={`/mechanic/problems/${problem.id}/job`}>Create job & estimate</Link>
-        : <p className="text-sm text-slate-600">Job #{problem.jobId} • estimate {estimatedTime(problem.estimatedMinutes)}</p>}
+      {(problem.status === "SUBMITTED" || problem.status === "REJECTED")
+        ? <div>{problem.rejectionReason && <p className="mb-2 rounded-lg bg-red-50 p-2 text-sm text-red-700">Customer reason: {problem.rejectionReason}</p>}<Link className="inline-block rounded-lg bg-slate-900 px-3 py-2 text-sm text-white" to={`/mechanic/problems/${problem.id}/job`}>{problem.status === "REJECTED" ? "Revise estimate" : "Create job & estimate"}</Link></div>
+        : <p className="text-sm text-slate-600">Job #{problem.jobId} • estimate {estimatedTime(problem.estimatedMinutes)} • {problem.status === "ESTIMATE_CREATED" ? "waiting for customer" : problem.status}</p>}
     </article>)}</div>
   </>;
 }

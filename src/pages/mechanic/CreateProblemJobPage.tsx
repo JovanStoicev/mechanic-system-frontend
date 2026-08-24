@@ -23,11 +23,17 @@ export default function CreateProblemJobPage() {
   useEffect(() => {
     Promise.all([customerPortal.assignedProblems(), getCatalogParts()])
       .then(([problems, loadedParts]) => {
-        const assigned = problems.find((item) => item.id === problemId && item.status === "SUBMITTED");
+        const assigned = problems.find((item) => item.id === problemId && (item.status === "SUBMITTED" || item.status === "REJECTED"));
         if (!assigned) { setError("Assigned problem not found or it was already converted."); return; }
         setProblem(assigned);
         setDescription(assigned.description);
         setParts(loadedParts);
+        if (assigned.status === "REJECTED") {
+          setLabourCost(assigned.workPrice ?? 0);
+          setEstimatedDays(Math.floor((assigned.estimatedMinutes ?? 0) / 1440));
+          setEstimatedHours(Math.floor(((assigned.estimatedMinutes ?? 0) % 1440) / 60));
+          setLines(assigned.parts.map((part) => ({ partId: part.partId, qty: part.qty })));
+        }
       })
       .catch((e) => setError(e instanceof Error ? e.message : "Failed to load job data"));
   }, [problemId]);
@@ -66,6 +72,7 @@ export default function CreateProblemJobPage() {
         <div className="mt-2 font-semibold">{problem.carName} — {problem.vin}</div>
         <div className="text-sm text-slate-600">Customer: {problem.customerName}</div>
         <p className="mt-2 text-sm">{problem.description}</p>
+        {problem.rejectionReason && <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700"><strong>Customer rejection reason:</strong> {problem.rejectionReason}</div>}
       </section>
 
       <div><label className="text-sm font-medium">Work to be performed</label><textarea className="mt-1 w-full rounded-lg border p-2" value={description} onChange={(e) => setDescription(e.target.value)} required rows={3} /></div>
