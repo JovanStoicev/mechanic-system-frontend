@@ -86,6 +86,7 @@ export default function AppRoutes() {
         <Route path="cars" element={<MyCarsPage />} />
         <Route path="cars/new" element={<CustomerCarFormPage />} />
         <Route path="cars/:id/edit" element={<CustomerCarFormPage />} />
+        <Route path="cars/:id/history" element={<CarHistoryPage role="customer" />} />
         <Route path="problems" element={<CustomerProblemsPage />} />
         <Route path="problems/new" element={<CreateProblemPage />} />
         <Route path="invoices" element={<InvoicesPage role="customer" />} />

@@ -23,12 +23,16 @@ export type CarHistory = CarRow & {
     status: "OPEN" | "DONE" | "CANCELLED";
     createdAt: string;
     completedAt: string | null;
+    nextServiceDate: string | null;
+    nextServiceMileage: number | null;
+    invoiceId: number | null;
     parts: Array<{ name: string; qty: number }>;
   }>;
 };
 
 export const getCars = () => api<CarRow[]>("/api/boss/cars");
 export const getCarHistory = (id: number) => api<CarHistory>(`/api/boss/cars/${id}/history`);
+export const getCustomerCarHistory = (id: number) => api<CarHistory>(`/api/customer/cars/${id}/history`);
 export const createCar = (input: {
   brand: string;
   model: string;

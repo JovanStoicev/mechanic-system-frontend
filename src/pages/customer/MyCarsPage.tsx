@@ -24,7 +24,7 @@ export default function MyCarsPage() {
     <div className="mt-4 space-y-2">
       {cars.map((car) => <div key={car.id} className="flex items-center justify-between rounded-lg border p-3">
         <div><b>{car.brand} {car.model}</b><div className="text-sm text-slate-600">{car.vin} • {car.engineType} • {car.horsePower} HP</div></div>
-        <Link className="rounded-lg border px-3 py-1.5 text-sm font-medium hover:bg-slate-50" to={`/customer/cars/${car.id}/edit`}>Edit</Link>
+        <div className="flex gap-2"><Link className="rounded-lg border px-3 py-1.5 text-sm font-medium hover:bg-slate-50" to={`/customer/cars/${car.id}/history`}>Service history</Link><Link className="rounded-lg border px-3 py-1.5 text-sm font-medium hover:bg-slate-50" to={`/customer/cars/${car.id}/edit`}>Edit</Link></div>
       </div>)}
       {!cars.length && !error && <p className="text-sm text-slate-500">No cars yet.</p>}
     </div>

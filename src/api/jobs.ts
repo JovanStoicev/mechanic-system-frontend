@@ -14,6 +14,8 @@ export type JobRow = {
   status: JobStatus;
   createdAt: string;
   completedAt: string | null;
+  nextServiceDate: string | null;
+  nextServiceMileage: number | null;
 };
 
 export type BossJobRow = JobRow & {
@@ -38,8 +40,8 @@ export type CatalogCar = { id: number; brand: string; model: string; vin: string
 export type CatalogPart = { id: number; name: string; price: number; stockQty: number };
 
 export const getMechanicJobs = () => api<JobRow[]>("/api/me/jobs");
-export const completeJob = (id: number) =>
-  api<JobRow>(`/api/me/jobs/${id}/complete`, { method: "PATCH" });
+export const completeJob = (id: number, recommendation: { nextServiceDate: string | null; nextServiceMileage: number | null }) =>
+  api<JobRow>(`/api/me/jobs/${id}/complete`, { method: "PATCH", body: JSON.stringify(recommendation) });
 export const cancelJob = (id: number) =>
   api<JobRow>(`/api/me/jobs/${id}/cancel`, { method: "PATCH" });
 export const getCatalogCars = () => api<CatalogCar[]>("/api/me/catalog/cars");
