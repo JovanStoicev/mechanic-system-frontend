@@ -44,6 +44,10 @@ export default function MechanicLayout() {
                 Work
               </div>
 
+              <NavLink to="/mechanic" end className={({ isActive }) => linkClass(isActive)}>
+                Dashboard
+              </NavLink>
+
               <NavLink
                 to="/mechanic/problems"
                 end

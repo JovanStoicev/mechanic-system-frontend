@@ -30,6 +30,9 @@ import CreateProblemJobPage from "../pages/mechanic/CreateProblemJobPage";
 import NotificationsPage from "../pages/NotificationsPage";
 import AppointmentsPage from "../pages/boss/AppointmentsPage";
 import InvoicesPage from "../pages/InvoicesPage";
+import BossHome from "../pages/boss/BossHome";
+import MechanicHome from "../pages/mechanic/MechanicHome";
+import CustomerHome from "../pages/customer/CustomerHome";
 
 export default function AppRoutes() {
   return (
@@ -46,7 +49,7 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       >
-        <Route index element={<Navigate to="/boss/mechanics" replace />} />
+        <Route index element={<BossHome />} />
         <Route path="mechanics" element={<MechanicsListPage />} />
         <Route path="mechanics/new" element={<AddMechanicPage />} />
         <Route path="parts" element={<PartsListPage />} />
@@ -73,7 +76,7 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       >
-        <Route index element={<Navigate to="/mechanic/jobs" replace />} />
+        <Route index element={<MechanicHome />} />
         <Route path="jobs" element={<MyJobsPage />} />
         <Route path="part-requests" element={<MechanicPartRequestsPage />} />
         <Route path="problems" element={<AssignedProblemsPage />} />
@@ -82,7 +85,7 @@ export default function AppRoutes() {
       </Route>
 
       <Route path="/customer" element={<ProtectedRoute allow="CUSTOMER"><CustomerLayout /></ProtectedRoute>}>
-        <Route index element={<Navigate to="/customer/cars" replace />} />
+        <Route index element={<CustomerHome />} />
         <Route path="cars" element={<MyCarsPage />} />
         <Route path="cars/new" element={<CustomerCarFormPage />} />
         <Route path="cars/:id/edit" element={<CustomerCarFormPage />} />
