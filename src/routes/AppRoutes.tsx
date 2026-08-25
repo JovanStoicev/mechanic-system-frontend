@@ -28,6 +28,7 @@ import CustomerProblemsPage from "../pages/customer/CustomerProblemsPage";
 import AssignedProblemsPage from "../pages/mechanic/AssignedProblemsPage";
 import CreateProblemJobPage from "../pages/mechanic/CreateProblemJobPage";
 import NotificationsPage from "../pages/NotificationsPage";
+import AppointmentsPage from "../pages/boss/AppointmentsPage";
 
 export default function AppRoutes() {
   return (
@@ -57,6 +58,7 @@ export default function AppRoutes() {
         <Route path="cars/:id" element={<CarHistoryPage />} />
         <Route path="jobs" element={<JobsListPage />} />
         <Route path="jobs/:id" element={<JobDetailsPage />} />
+        <Route path="appointments" element={<AppointmentsPage />} />
         <Route path="salaries" element={<SalaryReportPage />} />
         <Route path="finance" element={<FinanceDashboardPage />} />
       </Route>

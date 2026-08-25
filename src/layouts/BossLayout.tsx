@@ -95,6 +95,13 @@ export default function BossLayout() {
               >
                 Jobs
               </NavLink>
+              <NavLink
+                to="/boss/appointments"
+                end
+                className={({ isActive }) => linkClass(isActive)}
+              >
+                Appointments
+              </NavLink>
 
               <NavLink
                 to="/boss/salaries"

@@ -45,6 +45,11 @@ export default function CustomerProblemsPage() {
     catch (e) { setError(e instanceof Error ? e.message : "Could not reject estimate"); }
     finally { setSavingId(null); }
   }
+  async function acceptAppointment(id: number) {
+    try { setSavingId(id); setError(""); await customerPortal.acceptAppointment(id); load(); }
+    catch (e) { setError(e instanceof Error ? e.message : "Could not accept appointment"); }
+    finally { setSavingId(null); }
+  }
 
   return <>
     <h2 className="text-xl font-bold">My reported problems</h2>
@@ -54,6 +59,8 @@ export default function CustomerProblemsPage() {
       <div className="flex items-start justify-between gap-3"><div><b>{problem.carName}</b><div className="text-xs text-slate-500">{problem.vin}</div></div><span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-medium">{problem.status.replaceAll("_", " ")}</span></div>
       <p className="mt-3">{problem.description}</p>
       <p className="mt-2 text-sm text-slate-600">Mechanic: {problem.mechanicName}</p>
+
+      {problem.appointmentAt && <section className="mt-3 rounded-xl border border-blue-200 bg-blue-50 p-3 text-sm"><div className="flex flex-wrap items-center justify-between gap-2"><div><span className="text-blue-700">Inspection appointment</span><p className="font-semibold text-blue-950">{new Date(problem.appointmentAt).toLocaleString()}</p></div><span className="rounded-full bg-white px-2 py-1 text-xs font-semibold text-blue-800">{problem.appointmentStatus}</span></div>{problem.appointmentStatus === "PROPOSED" && <div className="mt-3"><p className="mb-2 text-blue-800">The mechanic proposed this new time.</p><button disabled={savingId === problem.id} onClick={() => acceptAppointment(problem.id)} className="rounded-lg bg-blue-800 px-3 py-2 text-sm font-medium text-white">Accept new time</button></div>}</section>}
 
       <section className="mt-4"><h3 className="text-sm font-semibold">Repair progress</h3><div className="mt-2 grid gap-2 sm:grid-cols-4">{timeline(problem).map((step, index) => <div key={step.label} className={`rounded-lg border p-2 text-xs ${step.done ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "bg-slate-50 text-slate-500"}`}><div className="font-semibold">{step.done ? "✓" : index + 1}. {step.label}</div></div>)}</div></section>
 
