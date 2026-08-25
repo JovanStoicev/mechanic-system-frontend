@@ -8,7 +8,7 @@ export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ??
   "http://localhost:8080";
 
-function getToken(): string | null {
+export function getToken(): string | null {
   try {
     const raw = localStorage.getItem("garage_auth_v1");
     if (!raw) return null;

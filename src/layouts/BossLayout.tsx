@@ -102,6 +102,13 @@ export default function BossLayout() {
               >
                 Appointments
               </NavLink>
+              <NavLink
+                to="/boss/invoices"
+                end
+                className={({ isActive }) => linkClass(isActive)}
+              >
+                Invoices
+              </NavLink>
 
               <NavLink
                 to="/boss/salaries"

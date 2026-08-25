@@ -29,6 +29,7 @@ import AssignedProblemsPage from "../pages/mechanic/AssignedProblemsPage";
 import CreateProblemJobPage from "../pages/mechanic/CreateProblemJobPage";
 import NotificationsPage from "../pages/NotificationsPage";
 import AppointmentsPage from "../pages/boss/AppointmentsPage";
+import InvoicesPage from "../pages/InvoicesPage";
 
 export default function AppRoutes() {
   return (
@@ -59,6 +60,7 @@ export default function AppRoutes() {
         <Route path="jobs" element={<JobsListPage />} />
         <Route path="jobs/:id" element={<JobDetailsPage />} />
         <Route path="appointments" element={<AppointmentsPage />} />
+        <Route path="invoices" element={<InvoicesPage role="boss" />} />
         <Route path="salaries" element={<SalaryReportPage />} />
         <Route path="finance" element={<FinanceDashboardPage />} />
       </Route>
@@ -86,6 +88,7 @@ export default function AppRoutes() {
         <Route path="cars/:id/edit" element={<CustomerCarFormPage />} />
         <Route path="problems" element={<CustomerProblemsPage />} />
         <Route path="problems/new" element={<CreateProblemPage />} />
+        <Route path="invoices" element={<InvoicesPage role="customer" />} />
         <Route path="notifications" element={<NotificationsPage />} />
       </Route>
 
