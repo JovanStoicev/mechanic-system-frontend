@@ -27,6 +27,7 @@ import CreateProblemPage from "../pages/customer/CreateProblemPage";
 import CustomerProblemsPage from "../pages/customer/CustomerProblemsPage";
 import AssignedProblemsPage from "../pages/mechanic/AssignedProblemsPage";
 import CreateProblemJobPage from "../pages/mechanic/CreateProblemJobPage";
+import NotificationsPage from "../pages/NotificationsPage";
 
 export default function AppRoutes() {
   return (
@@ -73,6 +74,7 @@ export default function AppRoutes() {
         <Route path="part-requests" element={<MechanicPartRequestsPage />} />
         <Route path="problems" element={<AssignedProblemsPage />} />
         <Route path="problems/:id/job" element={<CreateProblemJobPage />} />
+        <Route path="notifications" element={<NotificationsPage />} />
       </Route>
 
       <Route path="/customer" element={<ProtectedRoute allow="CUSTOMER"><CustomerLayout /></ProtectedRoute>}>
@@ -82,6 +84,7 @@ export default function AppRoutes() {
         <Route path="cars/:id/edit" element={<CustomerCarFormPage />} />
         <Route path="problems" element={<CustomerProblemsPage />} />
         <Route path="problems/new" element={<CreateProblemPage />} />
+        <Route path="notifications" element={<NotificationsPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/login" replace />} />

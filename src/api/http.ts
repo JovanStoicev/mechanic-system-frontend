@@ -38,7 +38,16 @@ export async function api<T>(
 
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(text || `Request failed (${res.status})`);
+    if (text) {
+      try {
+        const payload = JSON.parse(text) as { message?: string; detail?: string; error?: string };
+        throw new Error(payload.message || payload.detail || payload.error || text);
+      } catch (error) {
+        if (error instanceof SyntaxError) throw new Error(text);
+        throw error;
+      }
+    }
+    throw new Error(`Request failed (${res.status})`);
   }
 
   if (res.status === 204) return undefined as T;

@@ -27,6 +27,7 @@ export default function CreateProblemJobPage() {
         if (!assigned) { setError("Assigned problem not found or it was already converted."); return; }
         setProblem(assigned);
         setDescription(assigned.description);
+        setMileage(assigned.latestMileage);
         setParts(loadedParts);
         if (assigned.status === "REJECTED") {
           setLabourCost(assigned.workPrice ?? 0);
@@ -76,7 +77,7 @@ export default function CreateProblemJobPage() {
       </section>
 
       <div><label className="text-sm font-medium">Work to be performed</label><textarea className="mt-1 w-full rounded-lg border p-2" value={description} onChange={(e) => setDescription(e.target.value)} required rows={3} /></div>
-      <div><label className="text-sm font-medium">Mileage (km)</label><input className="mt-1 w-full rounded-lg border p-2" type="number" min="0" step="1" value={mileage} onFocus={(e) => e.currentTarget.select()} onMouseUp={(e) => e.preventDefault()} onKeyDown={(e) => { if (mileage === 0 && /^\d$/.test(e.key)) { e.preventDefault(); setMileage(Number(e.key)); } }} onChange={(e) => setMileage(Number(e.target.value))} required /><p className="mt-1 text-xs text-slate-500">Enter the current odometer reading. It cannot be lower than the car's latest recorded mileage.</p></div>
+      <div><label className="text-sm font-medium">Mileage (km)</label><input className="mt-1 w-full rounded-lg border p-2" type="number" min={problem.latestMileage} step="1" value={mileage} onFocus={(e) => e.currentTarget.select()} onMouseUp={(e) => e.preventDefault()} onKeyDown={(e) => { if (mileage === 0 && /^\d$/.test(e.key)) { e.preventDefault(); setMileage(Number(e.key)); } }} onChange={(e) => setMileage(Number(e.target.value))} required /><p className="mt-1 text-xs text-slate-500">Latest recorded mileage: {problem.latestMileage.toLocaleString()} km. Enter the same or a higher value.</p></div>
       <div><label className="text-sm font-medium">Mechanic work price (€)</label><input className="mt-1 w-full rounded-lg border p-2" type="number" min="0" step="0.01" value={labourCost} onFocus={(e) => e.currentTarget.select()} onMouseUp={(e) => e.preventDefault()} onKeyDown={(e) => { if (labourCost === 0 && /^\d$/.test(e.key)) { e.preventDefault(); setLabourCost(Number(e.key)); } }} onChange={(e) => setLabourCost(Number(e.target.value))} required /></div>
 
       <section className="rounded-xl border p-4">

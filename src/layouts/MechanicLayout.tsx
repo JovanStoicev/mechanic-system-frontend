@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+import NotificationsLink from "../components/NotificationsLink";
 
 function linkClass(isActive: boolean) {
   return [
@@ -66,6 +67,7 @@ export default function MechanicLayout() {
               >
                 Part requests
               </NavLink>
+              <NotificationsLink to="/mechanic/notifications" linkClass={linkClass} />
             </nav>
           </aside>
 

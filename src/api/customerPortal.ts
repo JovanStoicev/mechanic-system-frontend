@@ -3,7 +3,7 @@ import { api } from "./http";
 export type CustomerCar = { id: number; brand: string; model: string; vin: string; engineType: string; horsePower: number };
 export type CarInput = Omit<CustomerCar, "id">;
 export type MechanicOption = { id: number; name: string };
-export type Problem = { id: number; carId: number; carName: string; vin: string; mechanicId: number; mechanicName: string; customerName: string; description: string; status: "SUBMITTED"|"ESTIMATE_CREATED"|"APPROVED"|"REJECTED"|"CANCELLED"; jobId: number|null; estimatedMinutes: number|null; jobStatus: string|null; partsCost: number|null; workPrice: number|null; totalCost: number|null; rejectionReason: string|null; parts: { partId:number; name:string; unitPrice:number; qty:number }[]; createdAt: string; updatedAt: string };
+export type Problem = { id: number; carId: number; carName: string; vin: string; mechanicId: number; mechanicName: string; customerName: string; description: string; status: "SUBMITTED"|"ESTIMATE_CREATED"|"APPROVED"|"REJECTED"|"CANCELLED"; latestMileage: number; jobId: number|null; estimatedMinutes: number|null; jobStatus: string|null; partsCost: number|null; workPrice: number|null; totalCost: number|null; rejectionReason: string|null; parts: { partId:number; name:string; unitPrice:number; qty:number }[]; createdAt: string; updatedAt: string };
 
 export const customerPortal = {
   cars: () => api<CustomerCar[]>("/api/customer/cars"),

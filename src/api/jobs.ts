@@ -7,6 +7,7 @@ export type JobRow = {
   carId: number;
   description: string;
   mileage: number;
+  estimatedMinutes: number | null;
   partsCost: number;
   labourCost: number;
   totalCost: number;

@@ -6,6 +6,19 @@ function estimate(minutes: number | null) {
   return `${Math.floor(value / 1440)}d ${Math.floor((value % 1440) / 60)}h`;
 }
 
+function timeline(problem: Problem) {
+  const estimateReady = problem.status !== "SUBMITTED" && problem.status !== "CANCELLED";
+  const approved = problem.status === "APPROVED";
+  const completed = problem.jobStatus === "DONE";
+  const cancelled = problem.status === "CANCELLED" || problem.jobStatus === "CANCELLED";
+  return [
+    { label: "Problem submitted", done: true },
+    { label: problem.status === "REJECTED" ? "Estimate rejected - revision requested" : "Estimate received", done: estimateReady },
+    { label: approved ? "Estimate approved - repair in progress" : "Estimate approval", done: approved },
+    { label: cancelled ? "Repair cancelled" : "Repair completed", done: completed || cancelled },
+  ];
+}
+
 export default function CustomerProblemsPage() {
   const [items, setItems] = useState<Problem[]>([]);
   const [error, setError] = useState("");
@@ -41,6 +54,8 @@ export default function CustomerProblemsPage() {
       <div className="flex items-start justify-between gap-3"><div><b>{problem.carName}</b><div className="text-xs text-slate-500">{problem.vin}</div></div><span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-medium">{problem.status.replaceAll("_", " ")}</span></div>
       <p className="mt-3">{problem.description}</p>
       <p className="mt-2 text-sm text-slate-600">Mechanic: {problem.mechanicName}</p>
+
+      <section className="mt-4"><h3 className="text-sm font-semibold">Repair progress</h3><div className="mt-2 grid gap-2 sm:grid-cols-4">{timeline(problem).map((step, index) => <div key={step.label} className={`rounded-lg border p-2 text-xs ${step.done ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "bg-slate-50 text-slate-500"}`}><div className="font-semibold">{step.done ? "✓" : index + 1}. {step.label}</div></div>)}</div></section>
 
       {problem.jobId && <section className="mt-4 rounded-xl bg-slate-50 p-4 text-sm">
         <h3 className="font-semibold">Mechanic estimate</h3>
