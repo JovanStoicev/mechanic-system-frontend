@@ -1,1 +1,36 @@
 @import "tailwindcss";
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  touch-action: manipulation;
+}
+
+input,
+select,
+textarea {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.overflow-x-auto table {
+  min-width: max-content;
+}
+
+@media (max-width: 639px) {
+  button,
+  a {
+    min-height: 40px;
+  }
+}

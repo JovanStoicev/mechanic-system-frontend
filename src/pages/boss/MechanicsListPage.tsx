@@ -75,7 +75,22 @@ export default function MechanicsListPage() {
       )}
 
       {!loading && !error && (
-        <div className="mt-4 overflow-hidden rounded-xl border bg-white">
+        <>
+          <div className="mt-4 space-y-3 sm:hidden">
+            {items.map((m) => (
+              <article key={m.id} className="rounded-xl border bg-white p-4 text-sm">
+                <h2 className="font-semibold text-slate-900">{m.name}</h2>
+                <p className="mt-1 break-all text-slate-600">{m.email}</p>
+                <div className="mt-3 flex items-center justify-between gap-3 border-t pt-3">
+                  <span>Fixed salary: <strong>{m.fixedSalary}</strong></span>
+                  <button onClick={() => remove(m)} disabled={workingId === m.id} className="shrink-0 rounded-lg border border-red-200 px-3 py-1 text-red-700 disabled:opacity-50">{workingId === m.id ? "Deleting..." : "Delete"}</button>
+                </div>
+              </article>
+            ))}
+            {items.length === 0 && <p className="rounded-xl border bg-white p-4 text-sm text-slate-500">No mechanics yet.</p>}
+          </div>
+
+          <div className="mt-4 hidden overflow-x-auto rounded-xl border bg-white sm:block">
           <table className="w-full text-sm">
             <thead className="bg-slate-50 text-left">
               <tr>
@@ -104,7 +119,8 @@ export default function MechanicsListPage() {
               )}
             </tbody>
           </table>
-        </div>
+          </div>
+        </>
       )}
     </div>
   );

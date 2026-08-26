@@ -11,6 +11,7 @@ export default function MyJobsPage() {
   const [completing, setCompleting] = useState<JobRow | null>(null);
   const [nextServiceDate, setNextServiceDate] = useState("");
   const [nextServiceMileage, setNextServiceMileage] = useState("");
+  const [minimumNextServiceDate] = useState(() => new Date(Date.now() + 86400000).toISOString().slice(0, 10));
 
   useEffect(() => {
     getMechanicJobs()
@@ -56,7 +57,7 @@ export default function MyJobsPage() {
           </table>
         </div>
       )}
-      {completing && <div className="mt-4 rounded-xl border bg-slate-50 p-4"><h2 className="font-semibold">Complete job #{completing.id}</h2><p className="mt-1 text-sm text-slate-600">Optionally recommend the next service. The customer will see it in the car's service history.</p><div className="mt-4 grid gap-3 sm:grid-cols-2"><label className="text-sm font-medium">Next service date<input className="mt-1 w-full rounded-lg border bg-white px-3 py-2 font-normal" type="date" min={new Date(Date.now() + 86400000).toISOString().slice(0, 10)} value={nextServiceDate} onChange={(event) => setNextServiceDate(event.target.value)} /></label><label className="text-sm font-medium">Next service mileage (km)<input className="mt-1 w-full rounded-lg border bg-white px-3 py-2 font-normal" type="number" min={completing.mileage + 1} placeholder={`More than ${completing.mileage.toLocaleString()}`} value={nextServiceMileage} onChange={(event) => setNextServiceMileage(event.target.value)} /></label></div><div className="mt-4 flex gap-2"><button onClick={markDone} className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white">Complete job</button><button onClick={() => setCompleting(null)} className="rounded-lg border bg-white px-3 py-2 text-sm font-medium">Keep job open</button></div></div>}
+      {completing && <div className="mt-4 rounded-xl border bg-slate-50 p-4"><h2 className="font-semibold">Complete job #{completing.id}</h2><p className="mt-1 text-sm text-slate-600">Optionally recommend the next service. The customer will see it in the car's service history.</p><div className="mt-4 grid gap-3 sm:grid-cols-2"><label className="text-sm font-medium">Next service date<input className="mt-1 w-full rounded-lg border bg-white px-3 py-2 font-normal" type="date" min={minimumNextServiceDate} value={nextServiceDate} onChange={(event) => setNextServiceDate(event.target.value)} /></label><label className="text-sm font-medium">Next service mileage (km)<input className="mt-1 w-full rounded-lg border bg-white px-3 py-2 font-normal" type="number" min={completing.mileage + 1} placeholder={`More than ${completing.mileage.toLocaleString()}`} value={nextServiceMileage} onChange={(event) => setNextServiceMileage(event.target.value)} /></label></div><div className="mt-4 flex flex-wrap gap-2"><button onClick={markDone} className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white">Complete job</button><button onClick={() => setCompleting(null)} className="rounded-lg border bg-white px-3 py-2 text-sm font-medium">Keep job open</button></div></div>}
     </div>
   );
 }

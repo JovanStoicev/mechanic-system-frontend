@@ -6,7 +6,7 @@ export class UnauthorizedError extends Error {
 
 export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ??
-  "http://localhost:8080";
+  `${window.location.protocol}//${window.location.hostname}:8080`;
 
 export function getToken(): string | null {
   try {
@@ -52,5 +52,7 @@ export async function api<T>(
 
   if (res.status === 204) return undefined as T;
 
-  return res.json() as Promise<T>;
+  const responseText = await res.text();
+  if (!responseText) return undefined as T;
+  return JSON.parse(responseText) as T;
 }
